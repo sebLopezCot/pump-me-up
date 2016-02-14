@@ -8,11 +8,13 @@ cascPath = sys.argv[1]
 faceCascade = cv2.CascadeClassifier(cascPath)
 
 # previous frame variables that change over tiem
-lastMag = None
+lastX = None
+lastY= None
 numframes =0
 isAwake = False
 lastTime = 0
-mag = [] #stores 10 previous frames data
+xArr = [] #stores 10 previous x values
+yArr = [] #stores 10 previous y values
 t = [] #stores 10 previous frames'
 
 cap = cv2.VideoCapture(0)
@@ -42,54 +44,60 @@ while True:
         z = w*h #z is area change for depth perception
 
         cv2.rectangle(flip, (x,y), (x+w, y+h), (0,255,0), 2)
-        if lastMag == None:
+        if lastX == None:
              lastTime = time.time()
              pass
         elif numframes < 10:
-             currentMag = math.sqrt(int(x)**2+ int(y)**2)
              currentTime = time.time()
              changeinT = currentTime - lastTime
+             changeinX = abs(x - lastX)
+             changeinY = abs(y - lastY)
              
              lastTime = currentTime #assume that don't move much while running
 
-             mag.append(currentMag)
+             xArr.append(changeinX)
+             yArr.append(changeinY)
              t.append(changeinT)
         else:
-            currentMag = math.sqrt(int(x)**2+ int(y)**2)
-
-            print currentMag
-
             currentTime = time.time()
             changeinT = currentTime - lastTime
-
+            changeinX = abs(x - lastX)
+            changeinY = abs(y - lastY)
+             
             lastTime = currentTime #assume that don't move much while running
 
-            mag.append(currentMag)
+            xArr.append(changeinX)
+            yArr.append(changeinY)
             t.append(changeinT)
             
             # Calculate average of last 10 frames
             i = 10;
-            totalMag = 0;
+            totalX = 0;
+            totalY = 0;
             totalTime =0;
-            avgMag =0;
+            avgX =0;
+            avgY =0;
             while i > 0:
-                totalMag += mag[numframes-i]
-                i = i-1
-            i = 10;
-            while i > 0:
+                totalX += xArr[numframes-i]
+                totalY += yArr[numframes-i]
                 totalTime += t[numframes-i]
                 i = i-1
-            avgV = totalMag/totalTime
+            avgX = totalX/totalTime
+            avgY = totalY/totalTime
 
-            print avgV
+            print avgX
+            print avgY
 
-            if abs(avgV) > 100:
-                isAwake = True
-            print('Is awake = '+ str(isAwake))
+            # if avgV > 800:
+            #     isAwake = True
+            # else:
+            #     isAwake = False
+            # print('Is awake = '+ str(isAwake))
 
         
         # After initial, change lastMag
-        lastMag = math.sqrt(x^2+y^2)
+        lastX = x
+        lastY = y
 
         print('x: ' + str(x), 'y: ' + str(y))
         numframes +=1
