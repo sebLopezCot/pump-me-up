@@ -13,12 +13,17 @@ var textHelper = require('./textHelper'),
     storage = require('./storage');
 
 var registerIntentHandlers = function (intentHandlers, skillContext) {
-    // intentHandlers.NewUserIntent = function (intent, session, response) {
-    //     //reset scores for all existing players
-    //     storage.loadUser(session, function (currentUser) {
+    intentHandlers.NewUserIntent = function (intent, session, response) {
+        //reset scores for all existing players
+        //reset scores for all existing players
+        storage.loadUser(session, function (currentUser) {
             
-    //     });
-    // };
+            currentUser.updateDB(function () {
+               response.tell("Okay."); 
+            });
+        });
+
+    };
 
     // intentHandlers.AddPlayerIntent = function (intent, session, response) {
     //     //add a player to the current game,

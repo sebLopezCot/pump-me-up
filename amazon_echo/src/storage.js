@@ -31,7 +31,7 @@ var storage = (function () {
     }
 
     User.prototype = {
-        updateDB: function(){
+        updateDB: function(callback){
             this._session.attributes.currentUser = this.data;
             dynamodb.putItem({
                 TableName: 'users',
@@ -43,11 +43,11 @@ var storage = (function () {
                         S: JSON.stringify(this.data)
                     }
                 }
-            }, function(err, data){
-                if(err){
+            }, function (err, data) {
+                if (err) {
                     console.log(err, err.stack);
                 }
-                if(callback){
+                if (callback) {
                     callback();
                 }
             });

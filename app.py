@@ -3,6 +3,7 @@ import numpy
 import sys
 import time
 import math
+import serial
 
 cascPath = sys.argv[1]
 faceCascade = cv2.CascadeClassifier(cascPath)
@@ -16,6 +17,14 @@ lastTime = 0
 xArr = [] #stores 10 previous x values
 yArr = [] #stores 10 previous y values
 t = [] #stores 10 previous frames'
+awake = False
+awakeness = 50.0;
+
+motor = "0";
+light = "0";
+
+#ser = serial.Serial('COM4')
+#ser.write('0,0')
 
 cap = cv2.VideoCapture(0)
 
@@ -84,11 +93,32 @@ while True:
                 i = i-1
             avgX = totalX/totalTime
             avgY = totalY/totalTime
+            awake = True if (avgX**2 + avgY**2)**(0.5) > 220.0 else False
+            if awake:
+                if awakeness < 75.0:
+                    awakeness += 1.0
+                else:
+                    print 'DONE'
+            else:
+                if awakeness > -100.0:
+                    awakeness -= 1.0
 
             cv2.putText(flip, "avg x: " + str(avgX), (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
             cv2.putText(flip, "avg y: " + str(avgY), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
-            awake = True if (avgX**2 + avgY**2)**(0.5) > 220.0 else False
             cv2.putText(flip, "awake: " + str(awake), (20,60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
+            cv2.putText(flip, "awakeness: " + str(awakeness), (20,80), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
+
+            if awakeness < 0.0:
+                light = "1"
+            else:
+                light = "0"
+
+            if awakeness < -50.0:
+                motor = "1"
+            else:
+                motor = "0"
+
+            #ser.write(light + "," + motor)
 
             print avgX
             print avgY
