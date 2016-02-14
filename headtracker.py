@@ -85,14 +85,13 @@ while True:
             avgX = totalX/totalTime
             avgY = totalY/totalTime
 
+            cv2.putText(flip, "avg x: " + str(avgX), (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
+            cv2.putText(flip, "avg y: " + str(avgY), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
+            awake = True if (avgX**2 + avgY**2)**(0.5) > 220.0 else False
+            cv2.putText(flip, "awake: " + str(awake), (20,60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
+
             print avgX
             print avgY
-
-            # if avgV > 800:
-            #     isAwake = True
-            # else:
-            #     isAwake = False
-            # print('Is awake = '+ str(isAwake))
 
         
         # After initial, change lastMag
