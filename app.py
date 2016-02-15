@@ -23,8 +23,8 @@ awakeness = 50.0;
 motor = "0";
 light = "0";
 
-#ser = serial.Serial('COM4')
-#ser.write('0,0')
+ser = serial.Serial('COM4')
+ser.write('0')
 
 cap = cv2.VideoCapture(0)
 
@@ -101,14 +101,14 @@ while True:
                     print 'DONE'
             else:
                 if awakeness > -100.0:
-                    awakeness -= 1.0
+                    awakeness -= 3.0
 
             cv2.putText(flip, "avg x: " + str(avgX), (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
             cv2.putText(flip, "avg y: " + str(avgY), (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
             cv2.putText(flip, "awake: " + str(awake), (20,60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
             cv2.putText(flip, "awakeness: " + str(awakeness), (20,80), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
 
-            if awakeness < 0.0:
+            if awakeness < 20.0:
                 light = "1"
             else:
                 light = "0"
@@ -118,7 +118,7 @@ while True:
             else:
                 motor = "0"
 
-            #ser.write(light + "," + motor)
+            ser.write(light+"\n")
 
             print avgX
             print avgY
@@ -140,4 +140,6 @@ while True:
 # When everything is done, release the capture
 cap.release()
 cv2.destroyAllWindows()
+ser.write("0\n")
+ser.close()
 
